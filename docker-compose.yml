@@ -1,0 +1,48 @@
+version: '2.1'
+services:
+  certbot:
+    build:
+      context: certbot
+      dockerfile: Dockerfile
+    container_name: certbot
+    ports:
+      - 80:80
+    volumes:
+      - ./certs:/certs
+      - ./letsencrypt:/etc/letsencrypt
+      - ./var_log_letsencrypt:/var/log/letsencrypt
+    environment:
+      - LOGFILE=/var/log/letsencrypt/certrenewal.log
+      - DEBUG=false
+      - STAGING=true
+      - DOMAINS=registry.docklab.de
+      - EMAIL=daniel.schroeder@smail.inf.h-brs.de
+  registry:
+    restart: always
+    image: registry:2
+    ports:
+      - 5000:5000
+    environment:
+      REGISTRY_HTTP_TLS_CERTIFICATE: /certs/registry.docklab.de.fullchain.pem
+      REGISTRY_HTTP_TLS_KEY: /certs/registry.docklab.de.key.pem
+      REGISTRY_AUTH: htpasswd
+      REGISTRY_AUTH_HTPASSWD_REALM: Registry Realm
+      REGISTRY_AUTH_HTPASSWD_PATH: /auth/htpasswd
+      FORCE_SSL: 1
+    volumes:
+      - ./registry:/var/lib/registry
+      - ./certs:/certs
+      - ./auth:/auth
+#  registryui:
+#    image: konradkleine/docker-registry-frontend:v2
+#    ports:
+#      - 443:443
+#    environment:
+#      - ENV_DOCKER_REGISTRY_HOST=dh-2.docklab.de
+#      - ENV_DOCKER_REGISTRY_PORT=5000
+#      - ENV_USE_SSL=yes
+#      - ENV_DOCKER_REGISTRY_USE_SSL=1
+#    volumes:
+#      - ./certs/dh-2.docklab.de.key.pem:/etc/apache2/server.key:ro
+#      - ./certs/dh-2.docklab.de.fullchain.pem:/etc/apache2/server.crt:ro
+#    restart: always
