@@ -1,0 +1,2 @@
+# “At 06:00 on every day-of-month”
+0 6 * * * /scripts/certbot.sh >> /var/log/letsencrypt/cron.log 2>&1
