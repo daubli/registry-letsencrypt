@@ -3,19 +3,21 @@
 # script bases on https://github.com/janeczku/haproxy-acme-validation-plugin/blob/master/cert-renewal-haproxy.sh
 
 log_lvl_error() {
+  NOW=$(date +"%Y/%m/%d %H:%M:%S")
   if [ -n "${LOGFILE}" ]
   then
-    echo "[error] ${1}" >> ${LOGFILE}
+    echo "${NOW} [error] ${1}" >> ${LOGFILE}
   fi
-  >&2 echo "[error] ${1}" > /proc/1/fd/1 2>/proc/1/fd/2
+  >&2 echo "${NOW} [error] ${1}" > /proc/1/fd/1 2>/proc/1/fd/2
 }
 
 log_lvl_info() {
+  NOW=$(date +"%Y/%m/%d %H:%M:%S")
   if [ -n "${LOGFILE}" ]
   then
-    echo "[info] ${1}" >> ${LOGFILE}
+    echo "${NOW} [info] ${1}" >> ${LOGFILE}
   else
-    echo "[info] ${1}" > /proc/1/fd/1 2>/proc/1/fd/2
+    echo "${NOW} [info] ${1}" > /proc/1/fd/1 2>/proc/1/fd/2
   fi
 }
 
@@ -26,9 +28,6 @@ issueCertificate() {
 
 copyCertificate() {
   local d=${CERT_DOMAIN} # shorthand
-
-  #ensure there are no old certificates from the same domain
-  rm -rf /certs/$d.*
 
   #rename certificates and copy them into a flat hierarchy
   cp /etc/letsencrypt/live/$d/cert.pem /certs/$d.pem
@@ -97,6 +96,15 @@ processCertificates() {
   fi
 }
 
+createDummyCertificates() {
+    # create dummy certificates to enable nginx etc. to start
+    local d=${CERT_DOMAIN} # shorthand
+
+    openssl req -x509 -nodes -newkey rsa:1024 -days 1 -keyout "/certs/${d}.key.pem" \
+    -out "/certs/${d}.fullchain.pem" \
+    -subj '/CN=localhost'
+}
+
 # certbot arguments
 # default to standalone mode with http challenge
 CERTBOT_ARGS="--standalone --preferred-challenges http"
@@ -113,8 +121,7 @@ if [ "$STAGING" = true ]; then
   CERTBOT_ARGS=$CERTBOT_ARGS" --staging"
 fi
 
-NOW=$(date +"%D %T")
-log_lvl_info "$NOW: Checking certificates for domains $DOMAINS"
+log_lvl_info "Checking certificates for domains $DOMAINS"
 
 ##
 # extract certificate domains and run main routine on each
@@ -124,5 +131,6 @@ log_lvl_info "$NOW: Checking certificates for domains $DOMAINS"
 #
 for d in $DOMAINS; do
   CERT_DOMAIN=$d
+  createDummyCertificates
   processCertificates
 done
