@@ -60,4 +60,4 @@ log_lvl_info "Starting docker registry frontend for https://$1"
 docker run -d -e ENV_DOCKER_REGISTRY_HOST=$1 -e ENV_DOCKER_REGISTRY_PORT=5000 \
     -e ENV_USE_SSL=yes -e ENV_DOCKER_REGISTRY_USE_SSL=1 -v $PWD/certs/$1.key.pem:/etc/apache2/server.key:ro \
     -v $PWD/certs/$1.fullchain.pem:/etc/apache2/server.crt:ro --restart always -p 443:443 \
-    konradkleine/docker-registry-frontend:v2
+    --name registryui konradkleine/docker-registry-frontend:v2
