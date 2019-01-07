@@ -48,7 +48,7 @@ waitingforcertificates() {
 
 #check if a domain name is passed to the function
 if [[ -z "$1" ]]; then
-    log_lvl_error "Please specify a domain name (e.g. example.com)"
+    log_lvl_error "Please specify a domain name (e.g. example.com) as first parameter."
     exit
 fi
 
