@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
 log_lvl_info() {
-    NOW=$(date --iso-8601=seconds)
+    NOW=$(date +"%Y/%m/%d %H:%M:%S")
     echo "${NOW} [info] ${1}"
 }
 
 log_lvl_error() {
-    NOW=$(date --iso-8601=seconds)
+    NOW=$(date +"%Y/%m/%d %H:%M:%S")
     echo "${NOW} [error] ${1}"
 }
 
@@ -32,16 +32,6 @@ createuser() {
     log_lvl_info "Authentication configuration completed."
 }
 
-waitingforcertificates() {
-    log_lvl_info "Checking certificates..."
-    until [[ ! -f $PWD/certs/$1.fullchain.pem ]] || [[ ! -f $PWD/certs/$1.key.pem ]]; do
-        log_lvl_info "Waiting for certificates in folder $PWD/certs..."
-        sleep 2
-    done
-    log_lvl_info "Complete"
-
-}
-
 ###########################
 #        MAIN
 ###########################
@@ -54,10 +44,3 @@ fi
 
 checkauth
 docker-compose up -d
-waitingforcertificates
-#start docker frontend
-log_lvl_info "Starting docker registry frontend for https://$1"
-docker run -d -e ENV_DOCKER_REGISTRY_HOST=$1 -e ENV_DOCKER_REGISTRY_PORT=5000 \
-    -e ENV_USE_SSL=yes -e ENV_DOCKER_REGISTRY_USE_SSL=1 -v $PWD/certs/$1.key.pem:/etc/apache2/server.key:ro \
-    -v $PWD/certs/$1.fullchain.pem:/etc/apache2/server.crt:ro --restart always -p 443:443 \
-    --name registryui konradkleine/docker-registry-frontend:v2
