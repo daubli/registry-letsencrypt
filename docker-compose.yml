@@ -1,12 +1,21 @@
 version: '2.1'
 services:
+  nginx:
+    image: nginx:1.15-alpine
+    ports:
+      - 80:80
+      - 443:443
+    volumes:
+      - ./nginx:/etc/nginx/conf.d
+      - ./certs:/certs
+    restart: always
   certbot:
     build:
       context: certbot
       dockerfile: Dockerfile
     container_name: certbot
     ports:
-      - 80:80
+      - 81:80
     volumes:
       - ./certs:/certs
       - ./letsencrypt:/etc/letsencrypt
@@ -18,18 +27,27 @@ services:
       - DOMAINS=registry.docklab.de
       - EMAIL=daniel.schroeder@smail.inf.h-brs.de
   registry:
-    restart: always
     image: registry:2
     ports:
       - 5000:5000
     environment:
-      REGISTRY_HTTP_TLS_CERTIFICATE: /certs/registry.docklab.de.fullchain.pem
-      REGISTRY_HTTP_TLS_KEY: /certs/registry.docklab.de.key.pem
-      REGISTRY_AUTH: htpasswd
-      REGISTRY_AUTH_HTPASSWD_REALM: Registry Realm
-      REGISTRY_AUTH_HTPASSWD_PATH: /auth/htpasswd
-      FORCE_SSL: 1
+      - REGISTRY_HTTP_TLS_CERTIFICATE=/certs/registry.docklab.de.fullchain.pem
+      - REGISTRY_HTTP_TLS_KEY=/certs/registry.docklab.de.key.pem
+      - REGISTRY_AUTH=htpasswd
+      - REGISTRY_AUTH_HTPASSWD_REALM=Registry Realm
+      - REGISTRY_AUTH_HTPASSWD_PATH=/auth/htpasswd
+      - FORCE_SSL=1
     volumes:
       - ./registry:/var/lib/registry
       - ./certs:/certs
       - ./auth:/auth
+    restart: always
+  registryui:
+    image: konradkleine/docker-registry-frontend:v2
+    ports:
+      - 444:443
+    environment:
+      - ENV_DOCKER_REGISTRY_HOST=registry.docklab.de
+      - ENV_DOCKER_REGISTRY_PORT=5000
+      - ENV_DOCKER_REGISTRY_USE_SSL=1
+    restart: always
