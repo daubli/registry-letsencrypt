@@ -3,13 +3,30 @@
 This service stack issues [letsencrypt](https://letsencrypt.org/) certificates and starts a docker image registry
 with a web frontend. The certificates are renewed automatically in case they expire. To start the service stack run the following command:  
 
-`./startregistry.sh example.com`
+`./init-registry.sh example.com`
 
 To stop the service stack run 
 
-`./stopregistry.sh`
+`docker-compose stop`
 
 ## Services
+
+### Nginx 
+
+[Nginx](https://hub.docker.com/_/nginx) is can be configured as a reverse proxy. This is necessary, because requests on port 80 can be of two 
+different types. Requests that want to ensure the correctness of the certificate and request that want to reach the 
+registry frontend. The leather ones get forwarded to port 443. Nginx can also be configured to deliver ssl certificates. 
+So there is no need to pass the certificates to the frontend service, because the reverse proxy handles them.
+
+The image gets two volumes. The first volume is for the configuration file and the second volume should contain the certificates.
+
+    volumes:
+      - ./nginx:/etc/nginx/conf.d
+      - ./certs:/certs
+
+Overview:
+![Overview](overview.png)
+ 
 ### Certbot
 
 The certbot image is a wrapper of the official [certbot/certbot](https://hub.docker.com/r/certbot/certbot/)
@@ -37,7 +54,7 @@ The registry image exposes the port **5000**. You can map this port to another o
 
 ##### Volumes
 
-Mount the following volumes.
+The following volumes should be mounted:
 
     volumes:
       - ./registry:/var/lib/registry
@@ -49,16 +66,6 @@ The *registry* volume stores the data pushed to the registry. The *certs* volume
 ### Registry frontend
 
 The registry frontend is implemented in the image [docker-registry-frontend](https://github.com/kwk/docker-registry-frontend) maintained by Konrad Kleine.
-
-The image is ***not*** part of the docker-compose file, because it is necessary that certain conditions are fullfilled 
-before starting this image. Especially it is really necessary, that the certificates are valid and present.
-This means, that you start only the letsencrypt certificate automation and the docker registry with `docker-compose up`.
-The registry frontend will only start properly with this command:
- 
-`docker run -d -e ENV_DOCKER_REGISTRY_HOST=$1 -e ENV_DOCKER_REGISTRY_PORT=5000 \
-     -e ENV_USE_SSL=yes -e ENV_DOCKER_REGISTRY_USE_SSL=1 -v $PWD/certs/example.com.key.pem:/etc/apache2/server.key:ro \
-     -v $PWD/certs/example.com.fullchain.pem:/etc/apache2/server.crt:ro --restart always -p 443:443 \
-     konradkleine/docker-registry-frontend:v2`   
 
 #### Configuration
  
@@ -75,4 +82,8 @@ The image exposes port 443
 In case you want an encrypted frontend it is necessary to mount your 
 certificates to `/etc/apache2/server.key` and `/etc/apache2/server.crt`
 
-Example: `$docker run ... -v $PWD/certs/dh-2.docklab.de.fullchain.pem:/etc/apache2/server.crt:ro ...`
+
+    volumes:
+      - ./certs/server.key:/etc/apache2/server.key:ro
+      - ./certs/server.crt:/etc/apache2/server.crt:ro
+      
