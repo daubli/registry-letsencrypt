@@ -24,6 +24,7 @@ The software inside the container exposes port 80. You should expose the same po
 - **STAGING:** Use the staging server to obtain or revoke test (invalid) certificates
 - **DOMAINS:** Comma seperated list of domains to obtain a certificate for
 - **EMAIL:** Your e-mail address for cert registration and notifications
+- **HEALTH_CHECK_URL:** URL that has to response before certbot become active (e.g a reverse proxy)
 
 ### Build and run the container
 #### Build
