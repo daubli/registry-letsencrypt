@@ -11,6 +11,9 @@ To stop the service stack run
 
 ## Services
 
+### Overview
+![Overview](overview.png)
+
 ### Nginx 
 
 [Nginx](https://hub.docker.com/_/nginx) is can be configured as a reverse proxy. This is necessary, because requests on port 80 can be of two 
@@ -23,9 +26,6 @@ The image gets two volumes. The first volume is for the configuration file and t
     volumes:
       - ./nginx:/etc/nginx/conf.d
       - ./certs:/certs
-
-Overview:
-![Overview](overview.png)
  
 ### Certbot
 
