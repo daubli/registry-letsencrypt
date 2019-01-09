@@ -1,8 +1,7 @@
 #!/bin/sh
 log_lvl_info() {
   NOW=$(date +"%Y/%m/%d %H:%M:%S")
-  if [ -n "${LOGFILE}" ]
-  then
+  if [ -n "${LOGFILE}" ]; then
     echo "${NOW} [info] ${1}" >> ${LOGFILE}
   else
     echo "${NOW} [info] ${1}" > /proc/1/fd/1 2>/proc/1/fd/2
