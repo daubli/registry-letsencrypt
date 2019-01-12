@@ -105,6 +105,23 @@ createDummyCertificates() {
     -subj '/CN=localhost'
 }
 
+waitUntilHealthCheckUrlIsOnline() {
+    if [ -z $HEALTH_CHECK_URL ]; then
+        log_lvl_info "No HEALTH_CHECK_URL configured. Starting certbot without healthcheck"
+    else
+        # Wait for provided $HEALTH_CHECK_URL to become online
+        until [ $(curl -s -L --head --fail -o /dev/null -w '%{http_code}\n' --connect-timeout 3 --max-time 5 $HEALTH_CHECK_URL) -eq 200 ]; do
+          printf '.'
+          sleep 5
+        done
+    log_lvl_info "$HEALTH_CHECK_URL is online."
+    fi
+}
+
+################################
+# CERTBOT MAIN ROUTINE
+################################
+
 # certbot arguments
 # default to standalone mode with http challenge
 CERTBOT_ARGS="--standalone --preferred-challenges http"
@@ -132,5 +149,6 @@ log_lvl_info "Checking certificates for domains $DOMAINS"
 for d in $DOMAINS; do
   CERT_DOMAIN=$d
   createDummyCertificates
+  waitUntilHealthCheckUrlIsOnline
   processCertificates
 done
