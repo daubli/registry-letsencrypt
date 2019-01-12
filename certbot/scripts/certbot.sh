@@ -37,15 +37,15 @@ copyCertificate() {
   log_lvl_info "Certificates for $d and copied to /certs dir"
 }
 
-processCertificates() {
-  # Get the certificate for the domain(s) CERT_DOMAIN (a comma separated list)
-  # The certificate will be named after the first domain in the list
-  # To work, the following variables must be set:
-  # - CERT_DOMAIN : comma separated list of domains
-  # - EMAIL
-  # - CONCAT
-  # - CERTBOT_ARGS
 
+# Get the certificate for the domain(s) CERT_DOMAIN (a comma separated list)
+# The certificate will be named after the first domain in the list
+# To work, the following variables must be set:
+# - CERT_DOMAIN : comma separated list of domains
+# - EMAIL
+# - CONCAT
+# - CERTBOT_ARGS
+processCertificates() {
   local d=${CERT_DOMAIN} # shorthand
 
   if [ -d /etc/letsencrypt/live/$d ]; then
@@ -96,8 +96,8 @@ processCertificates() {
   fi
 }
 
+# create dummy certificates to enable nginx etc. to start
 createDummyCertificates() {
-    # create dummy certificates to enable nginx etc. to start
     local d=${CERT_DOMAIN} # shorthand
 
     openssl req -x509 -nodes -newkey rsa:1024 -days 1 -keyout "/certs/${d}.key.pem" \
@@ -105,6 +105,7 @@ createDummyCertificates() {
     -subj '/CN=localhost'
 }
 
+# perform healthcheck - is $HEALTH_CHECK_URL online?
 waitUntilHealthCheckUrlIsOnline() {
     if [ -z $HEALTH_CHECK_URL ]; then
         log_lvl_info "No HEALTH_CHECK_URL configured. Starting certbot without healthcheck"
@@ -142,9 +143,9 @@ log_lvl_info "Checking certificates for domains $DOMAINS"
 
 ##
 # extract certificate domains and run main routine on each
-# $DOMAINS is expected to be space separated list of domains such as in "foo bar baz"
+# $DOMAINS is expected to be space separated list of domains such as in "domain1.tld domain2.tld domain3.tld"
 # each domains subset can be composed of several domains in case of multi-host domains,
-# they are expected to be comma separated, such as in "foo bar,bat baz"
+# they are expected to be comma separated, such as in "domain1.tld sub.domain.tld,sub1.domain.tld domain3.tld"
 #
 for d in $DOMAINS; do
   CERT_DOMAIN=$d
