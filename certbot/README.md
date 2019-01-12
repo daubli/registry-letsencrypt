@@ -25,12 +25,6 @@ The software inside the container exposes port 80. You should expose the same po
 - **DOMAINS:** Comma seperated list of domains to obtain a certificate for
 - **EMAIL:** Your e-mail address for cert registration and notifications
 - **HEALTH_CHECK_URL:** URL that has to response before certbot become active (e.g a reverse proxy)
+- **RENEWED_CERTS_HOOK:** Command that can be used for example to notify another container that certificates where
+                             renewed and that the configuration (e.g of nginx) should be reloaded
 
-### Build and run the container
-#### Build
-In case you have a compose file, simply build the container with:
-
-`docker-compose build`
-#### Run
-
-`docker-compose up` 

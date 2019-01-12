@@ -26,6 +26,14 @@ issueCertificate() {
   return $?
 }
 
+renewedCertsHook() {
+    #hook to end of process of renewing certificates
+    if [ ! -z "${RENEWED_CERTS_HOOK}" ]; then
+        sh -c "${RENEWED_CERTS_HOOK}"
+        log_lvl_info "Renewed Certs Hook executed"
+    fi
+}
+
 copyCertificate() {
   local d=${CERT_DOMAIN} # shorthand
 
@@ -35,6 +43,7 @@ copyCertificate() {
   cp /etc/letsencrypt/live/$d/chain.pem /certs/$d.chain.pem
   cp /etc/letsencrypt/live/$d/fullchain.pem /certs/$d.fullchain.pem
   log_lvl_info "Certificates for $d and copied to /certs dir"
+  renewedCertsHook
 }
 
 
@@ -153,6 +162,3 @@ for d in $DOMAINS; do
   waitUntilHealthCheckUrlIsOnline
   processCertificates
 done
-
-#notify nginx to reload configuration - nginx container is started with 'nc -v -l -p 12345 -e nginx -s reload'
-echo "reload configuration" | nc nginx 12345

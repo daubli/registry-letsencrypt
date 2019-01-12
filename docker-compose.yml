@@ -28,6 +28,7 @@ services:
       - HEALTH_CHECK_URL=registry.docklab.de:80
       - DOMAINS=registry.docklab.de
       - EMAIL=daniel.schroeder@smail.inf.h-brs.de
+      - RENEWED_CERTS_HOOK=echo "1" | nc nginx 12345
   registry:
     image: registry:2
     ports:
