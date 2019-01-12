@@ -23,12 +23,12 @@ checkauth() {
 
 createuser() {
     echo "date --utc +%FT%TZ Please enter credentials for your registry login"
-    mkdir -p auth
+    mkdir -p conf/auth
     echo "Username"
     read username
     echo -n "Password":
     read -s password
-    docker run --rm --entrypoint htpasswd registry:2 -Bbn ${username} ${password} > auth/htpasswd
+    docker run --rm --entrypoint htpasswd registry:2 -Bbn ${username} ${password} > conf/auth/htpasswd
     log_lvl_info "Authentication configuration completed."
 }
 
@@ -38,7 +38,7 @@ createuser() {
 
 #check if a domain name is passed to the function
 if [[ -z "$1" ]]; then
-    log_lvl_error "Please specify a domain name (e.g. example.com) as first parameter."
+    log_lvl_error "Please specify a domain name (e.g. example.com) as a first parameter."
     exit
 fi
 

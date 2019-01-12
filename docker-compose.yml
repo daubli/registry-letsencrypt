@@ -6,8 +6,8 @@ services:
       - 80:80
       - 443:443
     volumes:
-      - ./nginx:/etc/nginx/conf.d
-      - ./certs:/certs
+      - ./conf/nginx:/etc/nginx/conf.d
+      - ./data/certs:/certs
     restart: always
   certbot:
     build:
@@ -17,9 +17,9 @@ services:
     ports:
       - 81:80
     volumes:
-      - ./certs:/certs
-      - ./letsencrypt:/etc/letsencrypt
-      - ./var_log_letsencrypt:/var/log/letsencrypt
+      - ./data/certs:/certs
+      - ./data/certbot/letsencrypt:/etc/letsencrypt
+      - ./data/certbot/var_log_letsencrypt:/var/log/letsencrypt
     environment:
       - LOGFILE=/var/log/letsencrypt/certrenewal.log
       - DEBUG=false
@@ -39,9 +39,9 @@ services:
       - REGISTRY_AUTH_HTPASSWD_PATH=/auth/htpasswd
       - FORCE_SSL=1
     volumes:
-      - ./registry:/var/lib/registry
-      - ./certs:/certs
-      - ./auth:/auth
+      - ./data/registry:/var/lib/registry
+      - ./data/certs:/certs
+      - ./conf/auth:/auth
     restart: always
   registryui:
     image: konradkleine/docker-registry-frontend:v2

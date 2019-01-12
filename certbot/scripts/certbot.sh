@@ -111,7 +111,7 @@ waitUntilHealthCheckUrlIsOnline() {
         log_lvl_info "No HEALTH_CHECK_URL configured. Starting certbot without healthcheck"
     else
         # Wait for provided $HEALTH_CHECK_URL to become online
-        until [ $(curl -s -L --head --fail -o /dev/null -w '%{http_code}\n' --connect-timeout 3 --max-time 5 $HEALTH_CHECK_URL) -eq 200 ]; do
+        until [ $(curl -s -k -L --head --fail -o /dev/null -w '%{http_code}\n' --connect-timeout 3 --max-time 5 $HEALTH_CHECK_URL) -eq 200 ]; do
           printf '.'
           sleep 5
         done
