@@ -9,11 +9,16 @@ with a web frontend. The certificates are renewed automatically in case they exp
 To stop the service stack run 
 
     docker-compose stop
+    
 
 If you want to start the docker-compose with `docker-compose up` replace the domain name environment variable $DOCKER_REGISTRY_DOMAIN_NAME with 
 your desired domain name or assign a new value to $DOCKER_REGISTRY_DOMAIN_NAME by executing
         
         export DOCKER_REGISTRY_DOMAIN_NAME=domain.tld
+
+Please ensure that the file `start-registry.sh` is executable. If its not please run 
+
+        chmod +x start-registry.sh
 
 ## Services
 
@@ -87,7 +92,6 @@ The image exposes port 443
 ##### Volumes
 In case you want an encrypted frontend it is necessary to mount your 
 certificates to `/etc/apache2/server.key` and `/etc/apache2/server.crt`
-
 
     volumes:
       - ./certs/server.key:/etc/apache2/server.key:ro
