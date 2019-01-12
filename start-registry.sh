@@ -22,7 +22,7 @@ checkauth() {
 }
 
 createuser() {
-    echo "date --utc +%FT%TZ Please enter credentials for your registry login"
+    echo "Please enter credentials for your registry login"
     mkdir -p conf/auth
     echo "Username"
     read username
@@ -42,5 +42,6 @@ if [[ -z "$1" ]]; then
     exit
 fi
 
+export DOCKER_REGISTRY_DOMAIN_NAME=$1
 checkauth
 docker-compose up -d

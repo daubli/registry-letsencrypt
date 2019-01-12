@@ -3,7 +3,7 @@
 This service stack issues [letsencrypt](https://letsencrypt.org/) certificates and starts a docker image registry
 with a web frontend. The certificates are renewed automatically in case they expire. To start the service stack run the following command:  
 
-`./init-registry.sh example.com`
+`./start-registry.sh example.com`
 
 To stop the service stack run 
 
