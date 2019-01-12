@@ -153,3 +153,6 @@ for d in $DOMAINS; do
   waitUntilHealthCheckUrlIsOnline
   processCertificates
 done
+
+#notify nginx to reload configuration - nginx container is started with 'nc -v -l -p 12345 -e nginx -s reload'
+echo "reload configuration" | nc nginx 12345

@@ -9,6 +9,7 @@ services:
       - ./conf/nginx:/etc/nginx/conf.d
       - ./data/certs:/certs
     restart: always
+    command: "sh -c '/usr/sbin/nginx && nc -v -l -p 12345 -e nginx -s reload'"
   certbot:
     build:
       context: certbot

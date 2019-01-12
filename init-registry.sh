@@ -11,10 +11,10 @@ log_lvl_error() {
 
 checkauth() {
     log_lvl_info "Checking authentication configuration..."
-    if [[ ! -d auth ]]; then
+    if [[ ! -d conf/auth ]]; then
         createuser
     else
-        if [[ ! -f auth/htpasswd ]]; then
+        if [[ ! -f conf/auth/htpasswd ]]; then
             createuser
         fi
     fi
