@@ -1,10 +1,14 @@
 # Registry with Letsencrypt Certificates
 
 This service stack issues [letsencrypt](https://letsencrypt.org/) certificates and starts a docker image registry
-with a web frontend. The certificates are renewed automatically in case they expire. To start the service stack run the following command:  
+with a web frontend. The certificates are renewed automatically in case they expire. 
+To start the service stack run the following command:  
 
     
-    ./start-registry.sh example.com
+    ./start-registry.sh domain.tld max.mustermann@domain.tld
+
+The first parameter is the domain name that point to the server on which the services run. The second parameter is needed 
+to issue the certificate and should be the email address of the responsible person of this domain. 
 
 To stop the service stack run 
 
@@ -15,6 +19,8 @@ If you want to start the docker-compose with `docker-compose up` replace the dom
 your desired domain name or assign a new value to $DOCKER_REGISTRY_DOMAIN_NAME by executing
         
         export DOCKER_REGISTRY_DOMAIN_NAME=domain.tld
+        export DOCKER_REGISTRY_CERT_EMAIL_ADDRESS=max.mustermann@domain.tld
+            
 
 Please ensure that the file `start-registry.sh` is executable. If its not please run 
 

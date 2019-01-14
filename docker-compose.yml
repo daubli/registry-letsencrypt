@@ -28,7 +28,7 @@ services:
       - STAGING=true
       - HEALTH_CHECK_URL=${DOCKER_REGISTRY_DOMAIN_NAME}:80
       - DOMAINS=${DOCKER_REGISTRY_DOMAIN_NAME}
-      - EMAIL=daniel.schroeder@smail.inf.h-brs.de
+      - EMAIL=${DOCKER_REGISTRY_CERT_EMAIL_ADDRESS}
       - RENEWED_CERTS_HOOK=echo "1" | nc nginx 12345
   registry:
     image: registry:2

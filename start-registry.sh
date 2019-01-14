@@ -38,10 +38,13 @@ createuser() {
 
 #check if a domain name is passed to the function
 if [[ -z "$1" ]]; then
-    log_lvl_error "Please specify a domain name (e.g. example.com) as a first parameter."
+    log_lvl_error "Please specify a domain name (e.g. example.com) as first parameter. \n
+     The second paramter should be the email address as second parameter.\n
+     For example: ${0} example.com example@example.com"
     exit
 fi
 
 export DOCKER_REGISTRY_DOMAIN_NAME=$1
+export DOCKER_REGISTRY_CERT_EMAIL_ADDRESS=$2
 checkauth
 docker-compose up -d
