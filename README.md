@@ -37,6 +37,14 @@ basic http authentication.
       - ./data/certs:/certs
       - ./conf/auth:/auth
 
+
+| Request | Regular expression in nginx | Add SSL Certificate in NGINX | Responsible Container |
+| --- | ----------- | --- | ----------- |
+| http://registry.docklab.de/.well-known/acme-challenge/9aZg7HEq_JyEnOnKn0fw0xrwDEUvTvx21owF6m_7MoM | /.well-known/acme-challenge/* | no | certbot:80 |
+| http://registry.docklab.de/ | /* | no | nginx:443 |
+| https://registry.docklab.de/v2/ | /v2/* | yes | registry:5000 | 
+| https://registry.docklab.de/ | /* | yes | registryui:80 |    
+
 You can get more detailed information by reading the docker documention [here.](https://docs.docker.com/registry/recipes/nginx/)
 
 ![Overview](overview.png)
