@@ -10,6 +10,8 @@ services:
       - ./data/certs:/certs
       - ./conf/auth:/auth
     restart: always
+    environment:
+      - DOMAIN={DOCKER_REGISTRY_DOMAIN_NAME}
     command: "sh -c '/usr/sbin/nginx && nc -v -l -p 12345 -e nginx -s reload'"
   certbot:
     build:
